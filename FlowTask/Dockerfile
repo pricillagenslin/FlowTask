@@ -1,7 +1,6 @@
 # ---------- Stage 1: build frontend + backend ----------
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
-# Install Node.js (for building the React app)
 RUN apt-get update && apt-get install -y curl \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
@@ -9,13 +8,11 @@ RUN apt-get update && apt-get install -y curl \
 
 WORKDIR /src
 
-# 1. Build the React frontend first
+# 1. Build the React frontend
 COPY flowtask-frontend/ ./flowtask-frontend/
-RUN cd flowtask-frontend \
-    && npm install \
-    && npm run build
+RUN cd flowtask-frontend && npm install && npm run build
 
-# 2. Restore + build the backend
+# 2. Build the backend
 COPY FlowTask/ ./FlowTask/
 RUN dotnet restore "FlowTask/FlowTask.csproj"
 
@@ -28,7 +25,6 @@ FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
 COPY --from=build /app/publish .
 
-# Render uses port 8080 by default; make sure ASP.NET listens on it
 ENV ASPNETCORE_URLS=http://+:8080
 EXPOSE 8080
 
