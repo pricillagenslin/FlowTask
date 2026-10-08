@@ -92,6 +92,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// ✅ ADDED: serve the built React files from wwwroot
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 // Enable CORS
 app.UseCors("Frontend");
 
@@ -100,5 +104,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+// ✅ ADDED: any unmatched route → send index.html (React Router handles it)
+app.MapFallbackToFile("index.html");
 
 app.Run();

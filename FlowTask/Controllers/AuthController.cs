@@ -10,10 +10,12 @@ namespace FlowTask.Controllers;
 public class AuthController : ControllerBase
 {
     private readonly AuthService _authService;
+    private readonly ILogger<AuthController> _logger;
 
-    public AuthController(AuthService authService)
+    public AuthController(AuthService authService, ILogger<AuthController> logger)
     {
         _authService = authService;
+        _logger = logger;
     }
 
     [HttpPost("register")]
@@ -33,6 +35,7 @@ public class AuthController : ControllerBase
         }
         catch (Exception ex)
         {
+            _logger.LogError(ex, "REGISTER ERROR");
             return BadRequest(ex.Message);
         }
     }
@@ -40,18 +43,26 @@ public class AuthController : ControllerBase
     [HttpPost("login")]
     public IActionResult Login(LoginRequest request)
     {
-        var token = _authService.Login(request);
-
-        if (token == null)
+        try
         {
-            return Unauthorized("Invalid email or password");
+            var token = _authService.Login(request);
+
+            if (token == null)
+            {
+                return Unauthorized("Invalid email or password");
+            }
+
+            return Ok(new
+            {
+                message = "Login successful",
+                token = token
+            });
         }
-
-        return Ok(new
+        catch (Exception ex)
         {
-            message = "Login successful",
-            token = token
-        });
+            _logger.LogError(ex, "LOGIN ERROR");
+            return StatusCode(500, new { error = ex.Message });
+        }
     }
 
     [HttpPost("logout")]

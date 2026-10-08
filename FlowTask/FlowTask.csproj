@@ -18,4 +18,12 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
   </ItemGroup>
 
+  <!-- ✅ ADDED: copy the built React app into wwwroot on publish -->
+  <ItemGroup>
+    <None Include="..\flowtask-frontend\dist\**\*"
+          Link="wwwroot\%(RecursiveDir)%(Filename)%(Extension)"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
