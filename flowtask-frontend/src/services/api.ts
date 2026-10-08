@@ -1,6 +1,5 @@
 import type { Task } from "../store/taskSlice";
-
-const API_URL = "http://localhost:5014/api";
+const API_URL = "https://flowtask-q9kj.onrender.com/api";;
 
 // =========================
 // TYPES
